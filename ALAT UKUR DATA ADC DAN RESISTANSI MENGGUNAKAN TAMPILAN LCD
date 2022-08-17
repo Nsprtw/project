@@ -1,0 +1,283 @@
+
+//Kodingan adc
+#include "LiquidCrystal.h"
+
+LiquidCrystal lcd(7,6,5,4,3,2);
+
+float input_voltage = 0.0;
+float temp=0.0;
+
+
+void setup()
+{
+   Serial.begin(9600);     //  opens serial port, sets data rate to 9600 bps
+   lcd.begin(16, 2);       //// set up the LCD's number of columns and rows: 
+   lcd.print("ADC ");
+}
+void loop()
+{
+
+//Conversion formula for voltage
+
+   int analog_value = analogRead(A1);
+   input_voltage = (analog_value * 1024.0) / 1024.0; 
+
+
+   if (input_voltage < 0.1) 
+   {
+     input_voltage=0.0;
+   } 
+    Serial.print("v= ");
+    Serial.println(input_voltage);
+    lcd.setCursor(0, 1);
+    lcd.print("= ");
+    lcd.print(input_voltage);
+    delay(300);
+}
+
+ //KODINGAN RESISTANSI
+
+#include<LiquidCrystal.h>
+
+LiquidCrystal lcd(7,6,5,4,3,2);   //rs,e,d4,d5,d6,d7
+
+int Vin=5;        //voltage at 5V pin of arduino
+float Vout=0;     //voltage at A0 pin of arduino
+float R1=1000;    //value of known resistance
+float R2=0;       //value of unknown resistance
+int a2d_data=0;    
+float buffer=0;            
+
+
+void setup() 
+{
+ lcd.begin(16,2);
+
+}
+
+void loop()
+{
+  a2d_data=analogRead(A0);
+  if(a2d_data)
+  {
+    buffer=a2d_data*Vin;
+    Vout=(buffer)/1024.0;
+    buffer=Vout/(Vin-Vout); 
+    R2=R1*buffer;
+
+    lcd.setCursor(4,0);
+    lcd.print("ohm meter");
+
+    lcd.setCursor(0,1);
+    lcd.print("R (ohm) = ");
+    lcd.print(R2);
+
+    delay(1000);
+
+  }
+
+}          
+
+//KODINGAN GABUNGAN
+ #include <LiquidCrystal.h>
+
+// inisialisasi PORT yang akan digunakan
+LiquidCrystal lcd(7,6,5,4,3,2);
+int upButton = 10;
+int downButton = 11;
+int selectButton =12;
+int back=0;
+int down=0;
+int menu = 1;
+float input_voltage = 0.0;
+float temp=0.0;
+int Vin=5;        //voltage at 5V pin of arduinofloat Vout=0;
+float Vout=0;     //voltage at A0 pin of arduino
+float R1=1000;    //value of known resistance
+float R2=0;       //value of unknown resistance
+int a2d_data=0;    
+float buffer=0;           
+
+
+void setup() {
+  // Setting LCD kolom dan baris: 
+  lcd.begin(16,2);
+  lcd.print("    ALAT UKUR   ");
+  lcd.setCursor(0,1);
+  lcd.print("By: nisa & fitri ");
+  delay(3000);
+  lcd.clear();
+  pinMode(upButton,INPUT_PULLUP);
+  pinMode(downButton,INPUT_PULLUP);
+  pinMode(selectButton,INPUT_PULLUP);
+  updateMenu();
+}
+
+void loop(){
+  if(!digitalRead(downButton)){
+    menu++;
+    updateMenu();
+    delay(100);
+    while(!digitalRead(downButton)); 
+  }
+  if(!digitalRead(upButton)){
+    menu--;
+    updateMenu();
+    delay(100);
+    while(!digitalRead(upButton)); 
+  }
+  if(!digitalRead(selectButton)){
+  executeAction();
+    updateMenu();
+    delay(100);
+    while(!digitalRead(selectButton));
+  }
+  }
+
+void updateMenu() {
+    switch(menu){
+    case 0:
+    menu = 1;
+    break;
+    case 1:
+    lcd.clear();
+    lcd.print(">ADC");
+    lcd.setCursor(0, 1);
+    lcd.print(" RESISTANSI");
+    break;
+    case 2:
+    lcd.clear();
+    lcd.print(" ADC");
+    lcd.setCursor(0, 1);
+    lcd.print(">RESISTANSI");
+    break;
+    case 3:
+    menu= 2;
+    break;
+}
+}
+
+void executeAction(){
+    switch(menu){
+    case 1:
+    action1();
+    break;
+    case 2:
+    action2();
+    break;
+
+  }
+}
+
+void action1(){
+menu6:
+while(1)
+{
+    lcd.clear();
+   int analog_value = analogRead(A1);
+   input_voltage = (analog_value * 1024.0) / 1024.0; 
+
+
+   if (input_voltage < 0.1) 
+   {
+     input_voltage=0.0;
+   } 
+    Serial.print("v= ");
+    Serial.println(input_voltage);
+    lcd.setCursor(0, 0);
+    lcd.print(">= ");
+    lcd.print(input_voltage);
+    lcd.setCursor(0, 1);
+    lcd.print(" back ");
+    delay(300);
+
+down = digitalRead(downButton);
+back = digitalRead(selectButton);
+if (down == LOW) { delay(300); goto menu7; }
+if (back == LOW) {}
+
+}
+menu7:
+while(1)
+{
+     lcd.clear();
+     int analog_value = analogRead(A1);
+   input_voltage = (analog_value * 1024.0) / 1024.0; 
+
+
+   if (input_voltage < 0.1) 
+   {
+     input_voltage=0.0;
+   } 
+    Serial.print("v= ");
+    Serial.println(input_voltage);
+    lcd.setCursor(0, 0);
+    lcd.print(" = ");
+    lcd.print(input_voltage);
+    lcd.setCursor(0, 1);
+    lcd.print(">back ");
+    delay(300);
+
+down = digitalRead(downButton);
+back = digitalRead(selectButton);
+if (down == LOW) {}
+if (back == LOW) { return updateMenu(); }
+
+}
+
+}
+
+void action2(){
+menu8:
+while(1)
+{
+   lcd.clear();
+  a2d_data=analogRead(A0);
+  if(a2d_data)
+  {
+    buffer=a2d_data*Vin;
+    Vout=(buffer)/1024.0;
+    buffer=Vout/(Vin-Vout); 
+    R2=R1*buffer;
+    lcd.setCursor(0,0);
+    lcd.print(">R (ohm) = ");
+    lcd.print(R2);
+    lcd.setCursor(0,1);
+    lcd.print(" back ");
+
+    delay(1000);
+
+down = digitalRead(downButton);
+back = digitalRead(selectButton);
+if (down == LOW) { delay(300); goto menu9; }
+if (back == LOW) {}
+
+}
+menu9:
+while(1)
+{
+
+lcd.clear();
+  a2d_data=analogRead(A0);
+  if(a2d_data)
+  {
+    buffer=a2d_data*Vin;
+    Vout=(buffer)/1024.0;
+    buffer=Vout/(Vin-Vout); 
+    R2=R1*buffer;
+    lcd.setCursor(0,0);
+    lcd.print(" R (ohm) = ");
+    lcd.print(R2);
+    lcd.setCursor(0,1);
+    lcd.print(">back ");
+
+    delay(1000);
+down = digitalRead(downButton);
+back = digitalRead(selectButton);
+if (down == LOW) {}
+if (back == LOW) { return updateMenu(); }
+
+}
+}
+}
+}
